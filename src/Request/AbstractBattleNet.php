@@ -50,7 +50,11 @@ abstract class AbstractBattleNet
 
     try
     {
-      return Curl::get($this->_makeApiUrl($path), $data)->run()->getJson();
+      $data = Curl::get($this->_makeApiUrl($path), $data)->run()->getJson();
+      if(isset($data['status']) && $data['status'] != 'ok') {
+          throw new BattleNetException($data['reason']);
+      }
+      return $data;
     }
     catch(CurlException $e)
     {
